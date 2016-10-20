@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+
+
+    defaultConfig {
+        applicationId "appiot.ericcson.com.demolwm2mclient"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'edl-v10.html'
+        exclude 'epl-v10.html'
+        exclude 'about.html'
+        exclude 'notice.html'
+        exclude 'META-INF/ECLIPSE_.SF'
+        exclude 'META-INF/ECLIPSE_.RSA'
+    }
+}
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 0, 'minutes'
+    resolutionStrategy.cacheChangingModulesFor 0, 'hours'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:design:24.2.1'
+    compile 'org.eclipse.leshan:leshan-client-cf:0.1.11-M14-SNAPSHOT'
+//    compile ('org.eclipse.leshan:leshan-client-cf:0.1.11-M14-SNAPSHOT') {
+//        exclude group: 'org.sl4j', module: 'sl4j-simple'
+//    }
+
+    //compile 'org.slf4j:slf4j-android:1.6.1-RC1'
+
+
+}

@@ -1,0 +1,15 @@
+Californium.properties
+gradlew*
+.idea
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+app/build
+com_crashlytics_export_strings.xml
+crashlytics-build.properties
+*.iml
+gradle
+gradle.properties
