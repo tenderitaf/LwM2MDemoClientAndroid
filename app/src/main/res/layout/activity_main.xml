@@ -94,7 +94,6 @@
             android:textColor="#000000"
             android:id="@+id/txtEndpoint"/>
 
-
         <TextView
             android:layout_marginTop="40dp"
             android:layout_width="match_parent"
@@ -104,13 +103,14 @@
             android:gravity="left"
             android:text="Use secure bootstrap"
             android:textSize="16sp"
-            android:textColor="#000000"/>
+            android:textColor="#000000" android:visibility="gone"/>
 
         <CheckBox
             android:layout_width="40dp"
             android:height="40dp"
             android:layout_height="wrap_content"
             android:id="@+id/chkSecure"
+            android:visibility="gone"
             />
 
         <LinearLayout
