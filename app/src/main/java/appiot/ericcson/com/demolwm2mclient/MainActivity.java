@@ -28,6 +28,7 @@ import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.leshan.ResponseCode;
 import org.eclipse.leshan.client.californium.LeshanClient;
 import org.eclipse.leshan.client.californium.LeshanClientBuilder;
+import org.eclipse.leshan.client.object.Server;
 import org.eclipse.leshan.client.observer.LwM2mClientObserver;
 import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
 import org.eclipse.leshan.client.resource.LwM2mObjectEnabler;
@@ -37,12 +38,14 @@ import org.eclipse.leshan.client.servers.ServerInfo;
 import org.eclipse.leshan.core.model.LwM2mModel;
 import org.eclipse.leshan.core.model.ObjectLoader;
 
+import org.eclipse.leshan.core.request.BindingMode;
 import org.eclipse.leshan.util.Hex;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
+import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.AddressableTextDisplay;
 import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.Colour;
 import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.Device;
 import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.Direction;
@@ -82,6 +85,7 @@ public class MainActivity extends Activity {
     TextView txtLongitude;
     TextView txtAltitude;
     TextView txtUncertainty;
+    TextView txtDisplay;
 
     Handler handler;
     @Override
@@ -110,13 +114,13 @@ public class MainActivity extends Activity {
         txtLongitude = (TextView) findViewById(R.id.txtLongitude);
         txtAltitude = (TextView) findViewById(R.id.txtAltitude);
         txtUncertainty = (TextView) findViewById(R.id.txtUncertainty);
+        txtDisplay = (TextView) findViewById(R.id.txtDisplay);
 
         setRegistered(false);
 
         layoutSecure.setVisibility(View.INVISIBLE);
 
         txtBootstrapUrl.setText(bootstrapUrlUnsecure);
-        txtEndpoint.setText(Build.SERIAL);
         txtEndpoint.setText(Build.SERIAL);
 
         final CheckBox useSecureBootstrap = (CheckBox) findViewById(R.id.chkSecure);
@@ -199,6 +203,7 @@ public class MainActivity extends Activity {
             smartObject.stop();
         }
         client.stop(true);
+        setRegistered(false);
     }
 
     private void start(String bootstrapUrl, String endpoint, String identity, String psk) {
@@ -231,6 +236,9 @@ public class MainActivity extends Activity {
         Colour colour = new Colour(0, layoutColor);
         addSmartObject(colour);
 
+        AddressableTextDisplay textDisplay = new AddressableTextDisplay(0, txtDisplay);
+        addSmartObject(textDisplay);
+
         String ipAddress = "0.0.0.0";
 
         String localAddress = ipAddress;
@@ -252,6 +260,7 @@ public class MainActivity extends Activity {
             initializer.setInstancesForObject(SECURITY, noSecBootstap(bootstrapUrl));
         } else {
             initializer.setInstancesForObject(SECURITY, pskBootstrap(bootstrapUrl, identity.getBytes(), Hex.decodeHex(psk.toCharArray())));
+            initializer.setInstancesForObject(SERVER, new Server(123, 3600, BindingMode.U, false));
         }
 
         List<Integer> enablerIds = new Vector<Integer>();
