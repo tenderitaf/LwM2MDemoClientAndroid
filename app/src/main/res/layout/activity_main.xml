@@ -5,25 +5,36 @@
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
     tools:context=".MainActivity"
-    android:background="#f0f0f0"
+    android:background="#ffffff"
     android:orientation="vertical"
+    android:keepScreenOn="true"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#00275d"
+        android:background="#ffffff"
         android:orientation="vertical"
         android:padding="10dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:text="AppIoT LwM2M Demo Client"
-            android:textStyle="bold"
-            android:textSize="26dp"
-            android:textColor="#ffffff"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+        <ImageView
+            android:layout_width="112dp"
+            android:layout_gravity="right"
+            android:layout_height="20dp"
+            android:src="@drawable/logo"
             />
+        <ImageView
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="right"
+            android:layout_height="60dp"
+            android:src="@drawable/appiot"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OMA LwM2M Demo Client"
+            android:textSize="20dp"
+            android:textAlignment="center"/>
     </LinearLayout>
 
     <LinearLayout
@@ -32,25 +43,12 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-
-
         <!-- BOOTSTRAP START -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/layoutBootstrap" android:visibility="visible">
-
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:gravity="center"-->
-            <!--android:text="BOOTSTRAP"-->
-            <!--android:textSize="20sp"-->
-            <!--android:textColor="#000000"-->
-            <!--android:textStyle="bold"-->
-            <!--android:id="@+id/title"/>-->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +57,7 @@
                 android:text="Bootstrap server:"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:layout_marginTop="20sp"/>
+                android:layout_marginTop="0dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -105,49 +103,46 @@
             android:textSize="16sp"
             android:textColor="#000000" android:visibility="gone"/>
 
-        <CheckBox
-            android:layout_width="40dp"
-            android:height="40dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/chkSecure"
-            android:visibility="gone"
-            />
-
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/layoutSecure">
-
-
-        <EditText
-            android:id="@+id/txtIdentity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text" android:hint="Identity"/>
-
-        <EditText
-            android:layout_marginTop="10dp"
-            android:id="@+id/txtPsk"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text" android:hint="Pre shared key"/>
-    </LinearLayout>
-
         <Button
             android:id="@+id/btnRegister"
-            android:layout_marginTop="40dp"
-
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#00275d"
+            android:background="#00625e"
             android:textColor="#ffffff"
             android:textStyle="bold"
             android:layout_gravity="center"
             android:text="    Bootstrap    "/>
 
-        </LinearLayout>
+            <ProgressBar
+                android:id="@+id/pbSpinner"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone">
+            </ProgressBar>
+
+
+
+            <TextView
+                android:id="@+id/txtStatusTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="20dp"
+                android:textAlignment="center"
+                android:layout_marginTop="20dp"/>
+            <TextView
+                android:id="@+id/txtStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12dp"
+                android:textAlignment="center"
+                />
+
+            </LinearLayout>
         <!-- BOOTSTRAP END -->
 
 
@@ -162,30 +157,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Device Managed by server:"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginTop="20sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:gravity="left"
-                android:text="DM URL"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:id="@+id/txtDmUrl"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="Resources observed:"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:layout_marginTop="20sp"/>
+                android:layout_marginTop="0sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -196,7 +172,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:gravity="left"
-                android:text="Illuminance (IPSO 3301/0/5700): "
+                android:text="Illuminance: "
                 android:textSize="16sp"
                 android:textColor="#000000"
                 />
@@ -221,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Direction (IPSO 3332/0/5705): "
+                    android:text="Direction: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
@@ -245,7 +221,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Latitude (LwM2M 6/0/0): "
+                    android:text="Latitude: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
@@ -269,7 +245,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Longitude (LwM2M 6/0/1): "
+                    android:text="Longitude: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
@@ -293,7 +269,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Altitude (LwM2M 6/0/2): "
+                    android:text="Altitude: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
@@ -316,7 +292,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Uncertainty (LwM2M 6/0/3): "
+                    android:text="Uncertainty: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
@@ -347,14 +323,14 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Colour (IPSO 3335/0/5706): "
+                    android:text="Colour: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
                 <LinearLayout
                     android:id="@+id/layoutColor"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="64dp"
+                    android:layout_height="16dp"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
                     android:orientation="horizontal"
@@ -370,7 +346,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="Addressable Text Display (IPSO 3341/0/5527): "
+                    android:text="Text display: "
                     android:textSize="16sp"
                     android:textColor="#000000"
                     />
@@ -379,21 +355,43 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="sddsdsdsdsd"
+                    android:text="[Write to this resource from AppIoT]"
                     android:textSize="16sp"
                     android:textColor="#000000"
                     android:background="#ffffff"
                     android:id="@+id/txtDisplay"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device Managed by server:"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginTop="20sp"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="left"
+                android:text="DM URL"
+                android:textSize="12dp"
+                android:textColor="#000000"
+                android:id="@+id/txtDmUrl"/>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnDeRegister"
                 android:layout_marginTop="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#00275d"
+                android:background="#7b0664"
                 android:textColor="#ffffff"
                 android:textStyle="bold"
                 android:layout_gravity="center"

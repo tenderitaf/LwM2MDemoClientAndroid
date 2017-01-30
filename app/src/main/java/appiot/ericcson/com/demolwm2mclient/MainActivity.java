@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,8 @@ public class MainActivity extends Activity {
     private static final String bootstrapUrlUnsecure = "coap://lwm2mdemobs.cloudapp.net:5683";
     private static final String bootstrapUrlSecure = "coaps://lwm2mdemobs.cloudapp.net:5684";
 
+    private boolean registered = false;
+
     private LeshanClient client;
     private List<SmartObject> smartObjects = new Vector<SmartObject>();
     public void addSmartObject(SmartObject smartObject) {
@@ -78,6 +81,8 @@ public class MainActivity extends Activity {
     TextView txtEndpoint;
     EditText txtIdentity;
     EditText txtPsk;
+    TextView txtStatusTitle;
+    TextView txtStatusText;
     TextView txtDmUrl;
     TextView txtIlluminance;
     TextView txtDirection;
@@ -86,6 +91,8 @@ public class MainActivity extends Activity {
     TextView txtAltitude;
     TextView txtUncertainty;
     TextView txtDisplay;
+    Button btnRegister;
+    ProgressBar pbSpinner;
 
     Handler handler;
     @Override
@@ -100,13 +107,12 @@ public class MainActivity extends Activity {
         handler = new Handler();
 
         layoutBootstrap = (LinearLayout) findViewById(R.id.layoutBootstrap);
-        layoutSecure = (LinearLayout) findViewById(R.id.layoutSecure);
         layoutDeviceManagement = (LinearLayout) findViewById(R.id.layoutDeviceManagement);
         layoutColor = (LinearLayout) findViewById(R.id.layoutColor);
         txtBootstrapUrl = (TextView) findViewById(R.id.txtBootstrapUrl);
         txtEndpoint = (TextView) findViewById(R.id.txtEndpoint);
-        txtIdentity = (EditText) findViewById(R.id.txtIdentity);
-        txtPsk = (EditText) findViewById(R.id.txtPsk);
+        txtStatusTitle = (TextView) findViewById(R.id.txtStatusTitle);
+        txtStatusText = (TextView) findViewById(R.id.txtStatusText);
         txtDmUrl = (TextView) findViewById(R.id.txtDmUrl);
         txtIlluminance = (TextView) findViewById(R.id.txtIlluminance);
         txtDirection = (TextView) findViewById(R.id.txtDirection);
@@ -116,43 +122,31 @@ public class MainActivity extends Activity {
         txtUncertainty = (TextView) findViewById(R.id.txtUncertainty);
         txtDisplay = (TextView) findViewById(R.id.txtDisplay);
 
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        pbSpinner = (ProgressBar) findViewById(R.id.pbSpinner);
+        pbSpinner.getIndeterminateDrawable().setColorFilter(0xFFF0BA00, android.graphics.PorterDuff.Mode.MULTIPLY);
         setRegistered(false);
-
-        layoutSecure.setVisibility(View.INVISIBLE);
 
         txtBootstrapUrl.setText(bootstrapUrlUnsecure);
         txtEndpoint.setText(Build.SERIAL);
 
-        final CheckBox useSecureBootstrap = (CheckBox) findViewById(R.id.chkSecure);
-        useSecureBootstrap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(useSecureBootstrap.isChecked()) {
-                    layoutSecure.setVisibility(View.VISIBLE);
-                    txtBootstrapUrl.setText(bootstrapUrlSecure);
-
-                } else {
-                    layoutSecure.setVisibility(View.INVISIBLE);
-                    txtBootstrapUrl.setText(bootstrapUrlUnsecure);
-                }
-            }
-        });
-
-
         final Activity mainActivity = this;
 
-        Button button = (Button) findViewById(R.id.btnRegister);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String bootstrapUrl = txtBootstrapUrl.getText().toString();
                 String endpoint = txtEndpoint.getText().toString();
                 String identity = null;
                 String psk = null;
-                if(useSecureBootstrap.isChecked()) {
-                    identity = txtIdentity.getText().toString();
-                    psk = txtPsk.getText().toString();
+
+                if(client != null) {
+                    client.stop(false);
+                    client = null;
                 }
+                setStatus("Bootstrapping");
+                setInProgress(true);
                 start(bootstrapUrl, endpoint, identity, psk);
             }
         });
@@ -164,12 +158,12 @@ public class MainActivity extends Activity {
                 stop();
             }
         });
-
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
     }
 
 
     private void setRegistered(final boolean registered) {
+        this.registered = registered;
         handler.post(new Runnable() {
             public void run() {
                 if(registered) {
@@ -185,17 +179,15 @@ public class MainActivity extends Activity {
 
     public void onPause() {
         super.onPause();
-        if(client != null) {
-            stop();
-        }
-
     }
-        @Override
+
+    @Override
     public void onResume() {
         super.onResume();
-            if(client != null) {
-                start(txtBootstrapUrl.getText().toString(), txtEndpoint.getText().toString(), txtIdentity.getText().toString(), txtPsk.getText().toString());
-            }
+        setRegistered(this.registered);
+        if(this.registered && client != null) {
+            client.start();
+        }
     }
 
     private void stop() {
@@ -210,14 +202,42 @@ public class MainActivity extends Activity {
         if(client == null) {
             init(bootstrapUrl, endpoint, identity, psk);
         }
-        client.start();
-        for(SmartObject smartObject : smartObjects) {
-            smartObject.start();
+        if(client != null) {
+            client.start();
+            for(SmartObject smartObject : smartObjects) {
+                smartObject.start();
+            }
         }
+    }
+
+    private void setInProgress(boolean inProgress) {
+        if(inProgress) {
+            btnRegister.setVisibility(View.GONE);
+            pbSpinner.setVisibility(View.VISIBLE);
+        } else {
+            btnRegister.setVisibility(View.VISIBLE);
+            pbSpinner.setVisibility(View.GONE);
+        }
+    }
+
+    private void setStatus(final String statusTitle) {
+        setStatus(statusTitle, "");
+    }
+
+    private void setStatus(final String statusTitle, final String statusText) {
+        handler.post(new Runnable() {
+            public void run() {
+                txtStatusTitle.setText("");
+                txtStatusText.setText("");
+                txtStatusTitle.setText(statusTitle);
+                txtStatusText.setText(statusText);
+            }
+        });
     }
 
     private void init(String bootstrapUrl, String endpoint, String identity, String psk) {
 
+        smartObjects.clear();
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Device device = new Device(0, activityManager);
         addSmartObject(device);
@@ -248,11 +268,8 @@ public class MainActivity extends Activity {
         String secureLocalAddress = ipAddress;
         int secureLocalPort = 5684;
 
-
-
         InputStream is = getResources().openRawResource(R.raw.omaobjectsspec);
         LwM2mModel model = new LwM2mModel(ObjectLoader.loadJsonStream(is));
-
 
         // Initialize object list
         ObjectsInitializer initializer = new ObjectsInitializer(model);
@@ -296,43 +313,35 @@ public class MainActivity extends Activity {
             @Override
             public void onUpdateTimeout(DmServerInfo server) {
                 Log.e(TAG, "###UPDATE TIME OUT");
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "UPDATE TIMEOUT.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Registration update timed out.");
+                client.stop(false);
+                setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onUpdateSuccess(DmServerInfo server, String registrationID) {
                 Log.d(TAG, "UPDATE SUCCESS");
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "UPDATE SUCCESSFUL.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("");
             }
 
             @Override
             public void onUpdateFailure(DmServerInfo server, ResponseCode responseCode, final String errorMessage) {
                 Log.e(TAG, "###UPDATE FAILURE");
                 Log.e(TAG, "ResponseCode: " + responseCode.toString() + " : " + errorMessage);
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "UPDATE FAILURE. " + errorMessage, Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Registration update failed.", errorMessage);
+                client.stop(false);
+                setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onRegistrationTimeout(DmServerInfo server) {
                 Log.e(TAG, "###REGISTRATION TIME OUT");
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "REGISTRATION TIMEOUT.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Registration timeout.", "When registering to " + server.getFullUri());
+                client.stop(false);
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
@@ -341,9 +350,9 @@ public class MainActivity extends Activity {
                 handler.post(new Runnable() {
                     public void run() {
                         txtDmUrl.setText(server.getFullUri().toString());
-                        Toast.makeText(MainActivity.this, "REGISTRATION SUCCESSFUL.", Toast.LENGTH_LONG).show();
                     }
                 });
+                setStatus("");
                 setRegistered(true);
             }
 
@@ -351,57 +360,45 @@ public class MainActivity extends Activity {
             public void onRegistrationFailure(DmServerInfo server, ResponseCode responseCode, final String errorMessage) {
                 Log.e(TAG, "###REGISTRATION FAILURE");
                 Log.e(TAG, "ResponseCode: " + responseCode.toString() + " : " + errorMessage);
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "REGISTRATION FAILURE. " + errorMessage, Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Registration failed.", "When registering to " + server.getFullUri() + ". " + errorMessage);
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onDeregistrationTimeout(DmServerInfo server) {
                 Log.e(TAG, "###DEREGISTRATION TIME OUT");
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "DEREGISTRATION TIMEOUT.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                client.stop(false);
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onDeregistrationSuccess(final DmServerInfo server, final String registrationID) {
                 Log.d(TAG, "DEREGISTRATION SUCCESS");
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "DEREGISTRATION SUCCESSFUL.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("");
+                client.stop(false);
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onDeregistrationFailure(DmServerInfo server, ResponseCode responseCode, final String errorMessage) {
                 Log.e(TAG, "###DEREGISTRATION FAILURE");
                 Log.e(TAG, "ResponseCode: " + responseCode.toString() + " : " + errorMessage);
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "DEREGISTRATION FAILURE. " + errorMessage, Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Deregistration failed.", server.getFullUri() + ". " + errorMessage);
+                client.stop(false);
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onBootstrapTimeout(ServerInfo bsserver) {
                 Log.e(TAG, "###BOOTSTRAP TIME OUT");
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "BOOTSTRAP TIMEOUT.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Bootstrapping timed out.", "When contacting " + bsserver.getFullUri() + ".");
+                client.stop(false);
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
@@ -410,24 +407,19 @@ public class MainActivity extends Activity {
                 // Handle registration service timer issue with android.
                 client.stop(false);
                 client.start();
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "BOOTSTRAP SUCCESSFUL.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Bootstrap successful", "Registering to management server.");
                 setRegistered(false);
+                setInProgress(false);
             }
 
             @Override
             public void onBootstrapFailure(ServerInfo bsserver, ResponseCode responseCode, final String errorMessage) {
                 Log.e(TAG, "###BOOTSTRAP FAILURE");
                 Log.e(TAG, "ResponseCode: " + responseCode.toString() + " : " + errorMessage);
-                handler.post(new Runnable() {
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "BOOTSTRAP FAILED. " + errorMessage, Toast.LENGTH_LONG).show();
-                    }
-                });
+                setStatus("Bootstrapping failed.", errorMessage);
+                client.stop(false);
                 setRegistered(false);
+                setInProgress(false);
             }
         });
     }
