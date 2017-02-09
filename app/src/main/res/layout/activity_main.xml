@@ -59,17 +59,15 @@
                 android:textColor="#000000"
                 android:layout_marginTop="0dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:gravity="left"
-                android:text="BS URL"
+                android:text="[enter bootstrap url]"
                 android:textSize="16sp"
                 android:textColor="#000000"
                 android:id="@+id/txtBootstrapUrl"/>
-
-
 
             <TextView
             android:layout_width="match_parent"
@@ -123,8 +121,6 @@
                 android:visibility="gone">
             </ProgressBar>
 
-
-
             <TextView
                 android:id="@+id/txtStatusTitle"
                 android:layout_width="match_parent"
@@ -157,7 +153,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resources observed:"
+                android:text="Observed resources:"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="#000000"
@@ -309,7 +305,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resources managed:"
+                android:text="Writeable resources:"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="#000000"
@@ -355,7 +351,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="left"
-                    android:text="[Write to this resource from AppIoT]"
+                    android:text=""
                     android:textSize="16sp"
                     android:textColor="#000000"
                     android:background="#ffffff"

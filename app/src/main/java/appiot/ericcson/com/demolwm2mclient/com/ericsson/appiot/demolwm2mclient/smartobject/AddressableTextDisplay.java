@@ -26,15 +26,20 @@ public class AddressableTextDisplay extends SmartObject {
 
     @Override
 	public WriteResponse write(int resourceid, LwM2mResource value) {
-    	setText(value.getValue().toString());
-		return WriteResponse.success();
+        switch (resourceid) {
+            case 5527:
+                setText(value.getValue().toString());
+                return WriteResponse.success();
+            default:
+                return WriteResponse.notFound();
+        }
 	}
 
 	@Override
     public ExecuteResponse execute(int resourceid, String params) {
         switch (resourceid) {
         case 5530:
-        	txtDisplay.setText("");
+        	setText("");
         	return ExecuteResponse.success();
         default: 
         	return super.execute(resourceid, params);

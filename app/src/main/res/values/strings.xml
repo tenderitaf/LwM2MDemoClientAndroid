@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">DemoLwM2MClient</string>
+    <string name="app_name">AppIoT - OMA LwM2M Demo Client</string>
     <string name="action_settings">Settings</string>
 </resources>

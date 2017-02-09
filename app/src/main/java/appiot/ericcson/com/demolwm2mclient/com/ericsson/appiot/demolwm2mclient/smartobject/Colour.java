@@ -76,13 +76,18 @@ public class Colour extends GenericSensor {
 	public WriteResponse write(int resourceid, LwM2mResource value) {
 		if(resourceid == 5706) {
 			this.color = value.getValue().toString();
-			handler.post(new Runnable() {
-				public void run() {
-					try {
-						layout.setBackgroundColor(Color.parseColor(color));
-					} catch (Exception e) {}
-				}
-			});
+			try {
+				final int colorValue = Color.parseColor(color);
+				handler.post(new Runnable() {
+					public void run() {
+						try {
+							layout.setBackgroundColor(colorValue);
+						} catch (Exception e) {}
+					}
+				});
+			} catch(IllegalArgumentException e) {
+				return WriteResponse.badRequest(this.color + " is not a supported value.");
+			}
 		}
 		return WriteResponse.success();
 

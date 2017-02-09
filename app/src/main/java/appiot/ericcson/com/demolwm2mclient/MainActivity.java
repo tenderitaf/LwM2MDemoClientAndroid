@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
     LinearLayout layoutSecure;
     LinearLayout layoutDeviceManagement;
     LinearLayout layoutColor;
-    TextView txtBootstrapUrl;
+    EditText txtBootstrapUrl;
     TextView txtEndpoint;
     EditText txtIdentity;
     EditText txtPsk;
@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
         layoutBootstrap = (LinearLayout) findViewById(R.id.layoutBootstrap);
         layoutDeviceManagement = (LinearLayout) findViewById(R.id.layoutDeviceManagement);
         layoutColor = (LinearLayout) findViewById(R.id.layoutColor);
-        txtBootstrapUrl = (TextView) findViewById(R.id.txtBootstrapUrl);
+        txtBootstrapUrl = (EditText) findViewById(R.id.txtBootstrapUrl);
         txtEndpoint = (TextView) findViewById(R.id.txtEndpoint);
         txtStatusTitle = (TextView) findViewById(R.id.txtStatusTitle);
         txtStatusText = (TextView) findViewById(R.id.txtStatusText);
@@ -184,10 +184,10 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        setRegistered(this.registered);
+/*        setRegistered(this.registered);
         if(this.registered && client != null) {
             client.start();
-        }
+        }*/
     }
 
     private void stop() {
