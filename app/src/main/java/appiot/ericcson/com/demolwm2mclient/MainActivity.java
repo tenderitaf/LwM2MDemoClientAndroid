@@ -53,6 +53,7 @@ import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.s
 import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.Illuminance;
 import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.Location;
 import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.SmartObject;
+import appiot.ericcson.com.demolwm2mclient.com.ericsson.appiot.demolwm2mclient.smartobject.Timer;
 
 import static org.eclipse.leshan.LwM2mId.SECURITY;
 import static org.eclipse.leshan.LwM2mId.SERVER;
@@ -62,8 +63,9 @@ import static org.eclipse.leshan.client.object.Security.pskBootstrap;
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
-    private static final String bootstrapUrlUnsecure = "coap://lwm2mdemobs.cloudapp.net:5683";
-    private static final String bootstrapUrlSecure = "coaps://lwm2mdemobs.cloudapp.net:5684";
+    private static final String bootstrapUrlUnsecure = "coap://lwm2m-mwcdemo.northeurope.cloudapp.azure.com:5673";
+//    private static final String bootstrapUrlUnsecure = "coap://lwm2mdemobs.cloudapp.net:5683";
+//    private static final String bootstrapUrlSecure = "coaps://lwm2mdemobs.cloudapp.net:5684";
 
     private boolean registered = false;
 
@@ -258,6 +260,9 @@ public class MainActivity extends Activity {
 
         AddressableTextDisplay textDisplay = new AddressableTextDisplay(0, txtDisplay);
         addSmartObject(textDisplay);
+
+        Timer timer = new Timer();
+        addSmartObject(timer);
 
         String ipAddress = "0.0.0.0";
 

@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.widget.TextView;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
@@ -61,16 +62,19 @@ public class AddressableTextDisplay extends SmartObject {
 		return text;
 	}
 
-	public void setText(final String value) {
+	public synchronized void setText(final String value) {
+        this.text = value;
+        fireResourcesChange(5527);
+
         handler.post(new Runnable() {
             public void run() {
                 try {
                     txtDisplay.setText(value);
-                } catch (Exception e) {}
+                } catch (Throwable t) {
+                    logger.log(Level.SEVERE, "Failed to set text.", t);
+                }
             }
         });
-        this.text = value;
-		fireResourcesChange(5527);
 	}
 
     @Override
